@@ -7,6 +7,7 @@ public enum TriggerType
 {
     WalkAway = 0,
     JumpUp = 1,
+    NextLevel = 99,
 }
 
 public class EndTrigger : MonoBehaviour

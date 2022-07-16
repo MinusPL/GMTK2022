@@ -34,6 +34,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private GameObject WAPath;
 
+    [SerializeField]
+    private string nextSceneName;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -56,8 +59,8 @@ public class GameManager : MonoBehaviour
 
     void LoadPlayer()
     {
-        playerObject = Resources.Load<GameObject>("Prefabs/Player");
-        var playerObj = Instantiate(playerObject, startingPoint.transform.position, Quaternion.identity);
+        playerObject = Resources.Load<GameObject>("Prefabs/PC2");
+        var playerObj = Instantiate(playerObject, startingPoint.transform.position, Quaternion.Euler(0f,90f,0f));
         var camTarget = GameObject.FindGameObjectWithTag("Camera Target");
         camTarget.GetComponent<PlayerFollow>().player = playerObj;
         GameObject.FindGameObjectWithTag("Player Camera").GetComponent<CinemachineVirtualCamera>().LookAt = playerObj.transform;
@@ -67,10 +70,18 @@ public class GameManager : MonoBehaviour
     {
         playerCam.SetActive(false);
         waCam.SetActive(true);
-        if (type == 0)
+        switch((TriggerType)type)
         {
-            GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().SetWaypoints(waypoints);
-            playerInputEnabled = false;
+            case TriggerType.WalkAway:
+                GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().SetWaypoints(waypoints);
+                playerInputEnabled = false;
+                break;
+            case TriggerType.NextLevel:
+                SceneManager.LoadScene(nextSceneName);
+                break;
+            default:
+                Debug.Log("Ooopsie, this trigger is not supported!");
+                break;
         }
     }
 }

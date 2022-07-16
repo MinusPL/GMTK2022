@@ -44,12 +44,19 @@ public class PlayerController : MonoBehaviour
     private float characterJumpingHeight = 1.0f;
 
 
-    private float targetAngle = 0f;
+    private float targetAngle = 90f;
 
     //For last part of level
     //Also decide if character is jumping out or walking away.
     private List<GameObject> waypoints;
     private int waypointIndex = 0;
+
+
+    private bool isArmed = false;
+    [SerializeField]
+    private GameObject swordBeltObject;
+    [SerializeField]
+    private GameObject swordHandObject;
 
     // Start is called before the first frame update
     void Start()
@@ -89,6 +96,7 @@ public class PlayerController : MonoBehaviour
         if (dir.magnitude > 0.01f)
         {
             animator.SetBool("isMoving", true);
+            animator.SetBool("isArmed", isArmed);
             //animator.SetBool("isSprint", false);
             //animator.SetFloat("dirMagnitude", 0f);
             if (GameManager.Instance.playerInputEnabled)
@@ -99,6 +107,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             animator.SetBool("isMoving", false);
+            animator.SetBool("isArmed", isArmed);
             //animator.SetBool("isSprint", false);
         }
 
@@ -178,6 +187,18 @@ public class PlayerController : MonoBehaviour
             velocity.y = ySpeed;
             cc.Move(velocity * Time.deltaTime);
         }
+
+        if (isArmed && animator.GetCurrentAnimatorStateInfo(0).IsTag("SwordDrawn2"))
+        {
+            swordBeltObject.SetActive(false);
+            swordHandObject.SetActive(true);
+        }
+
+        if (!isArmed && animator.GetCurrentAnimatorStateInfo(0).IsTag("SwordSheathed2"))
+        {
+            swordBeltObject.SetActive(true);
+            swordHandObject.SetActive(false);
+        }
     }
 
     public void OnAnimatorMove()
@@ -220,6 +241,29 @@ public class PlayerController : MonoBehaviour
         {
             jumpButtonPressedTime = Time.time;
         }
+    }
+
+    public void OnFire(InputValue value)
+    {
+        if (!isArmed)
+        {
+            isArmed = true;
+            //Return since we just drew the weapon, we're not going to attack
+            return;
+        }
+        else
+        {
+            //Figure out how to attack now
+            if(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle Sword") || animator.GetCurrentAnimatorStateInfo(0).IsName("Sword Run"))
+            {
+                animator.SetTrigger("Attack");
+            }
+        }
+    }
+
+    public void OnSheatheWeapon(InputValue value)
+    {
+        isArmed = !isArmed;
     }
 
     public void SetWaypoints(List<GameObject> _waypoints)
