@@ -49,6 +49,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "PowerAttack",
+                    "type": "Button",
+                    "id": "97d7a627-46c4-4e66-a727-9103ba6f6aa2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -291,6 +300,17 @@
                     "processors": "",
                     "groups": "Keyboard&Mouse",
                     "action": "SheatheWeapon",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7e517b28-119e-484d-8517-6c76ac5c2b96",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "PowerAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -807,6 +827,34 @@
                     "processors": "",
                     "groups": "XR",
                     "action": "TrackedDeviceOrientation",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "DiceGame",
+            "id": "016ed397-3fab-42f6-a455-835d9cee02f2",
+            "actions": [
+                {
+                    "name": "Shuffle",
+                    "type": "Button",
+                    "id": "f6ec93fa-212f-4e08-85e8-87099729ac37",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "916a6621-8a8e-414e-adc2-723056705343",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Shuffle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

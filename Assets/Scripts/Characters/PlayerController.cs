@@ -57,6 +57,30 @@ public class PlayerController : MonoBehaviour
     private GameObject swordBeltObject;
     [SerializeField]
     private GameObject swordHandObject;
+    [SerializeField]
+    private float WeaponToggleBlockTime = 0.5f;
+    private float WeaponToggleTimer = 0f;
+    private bool canToggleWeapon = true;
+    [SerializeField]
+    private float attackBlockTime = 0.5f;
+    private float attackBlockTimer = 0f;
+    private bool canAttack = true;
+
+    [SerializeField]
+    private float NormalAttackDamage = 20f;
+    [SerializeField]
+    private float NormalAttackDamageDelay = 1f;
+    private float NADamageDelayTimer = 0f;
+    [SerializeField]
+    private float PowerAttackDamage = 40f;
+    [SerializeField]
+    private float PowerAttackDamageDelay = 2f;
+    private float PADamageDelayTimer = 0f;
+
+
+    [SerializeField]
+    private AttackVolumePlayer avp;
+
 
     // Start is called before the first frame update
     void Start()
@@ -90,8 +114,6 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
-
-        Debug.DrawRay(transform.position, dir, Color.red);
 
         if (dir.magnitude > 0.01f)
         {
@@ -140,7 +162,7 @@ public class PlayerController : MonoBehaviour
             cc.height = characterHeight;
             animatorDirection = Vector3.zero;
 
-            if (Time.time - jumpButtonPressedTime <= jumpButtonGracePeriod)
+            if (Time.time - jumpButtonPressedTime <= jumpButtonGracePeriod && !isArmed)
             {
                 ySpeed = jumpSpeed;
                 animator.SetBool("isJumping", true);
@@ -199,6 +221,52 @@ public class PlayerController : MonoBehaviour
             swordBeltObject.SetActive(true);
             swordHandObject.SetActive(false);
         }
+
+        if (WeaponToggleTimer > 0f)
+        {
+            WeaponToggleTimer -= Time.deltaTime;
+            if (WeaponToggleTimer <= 0f)
+            {
+                WeaponToggleTimer = 0f;
+                canToggleWeapon = true;
+            }
+        }
+
+        if (attackBlockTimer > 0f)
+        {
+            attackBlockTimer -= Time.deltaTime;
+            if (attackBlockTimer <= 0f)
+            {
+                attackBlockTimer = 0f;
+                canAttack = true;
+            }
+        }
+
+        if(NADamageDelayTimer > 0f)
+        {
+            NADamageDelayTimer -= Time.deltaTime;
+            if(NADamageDelayTimer <= 0f)
+            {
+                NADamageDelayTimer = 0f;
+                DealDamage(NormalAttackDamage);
+            }
+        }
+
+        if (PADamageDelayTimer > 0f)
+        {
+            PADamageDelayTimer -= Time.deltaTime;
+            if (PADamageDelayTimer <= 0f)
+            {
+                PADamageDelayTimer = 0f;
+                DealDamage(PowerAttackDamage);
+            }
+        }
+
+        //if (canAttack && !(animator.GetCurrentAnimatorStateInfo(0).IsName("Normal Attack") || animator.GetCurrentAnimatorStateInfo(0).IsName("Power Attack")))
+        //{
+        //    currentWeapon.isAttack = false;
+        //    currentWeapon.ClearHits();
+        //}
     }
 
     public void OnAnimatorMove()
@@ -245,25 +313,97 @@ public class PlayerController : MonoBehaviour
 
     public void OnFire(InputValue value)
     {
+        if (!GameManager.Instance.playerInputEnabled)
+            return;
+
         if (!isArmed)
         {
-            isArmed = true;
+            if (canToggleWeapon && (animator.GetCurrentAnimatorStateInfo(0).IsName("Move") ||
+                                    animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") ||
+                                    animator.GetCurrentAnimatorStateInfo(0).IsName("Idle Sword") ||
+                                    animator.GetCurrentAnimatorStateInfo(0).IsName("Sword Run")))
+            {
+                isArmed = true;
+                canToggleWeapon = false;
+                WeaponToggleTimer = WeaponToggleBlockTime;
+            }
             //Return since we just drew the weapon, we're not going to attack
             return;
         }
         else
         {
             //Figure out how to attack now
-            if(animator.GetCurrentAnimatorStateInfo(0).IsName("Idle Sword") || animator.GetCurrentAnimatorStateInfo(0).IsName("Sword Run"))
+            if(canAttack && (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle Sword") || animator.GetCurrentAnimatorStateInfo(0).IsName("Sword Run")))
             {
                 animator.SetTrigger("Attack");
+                canAttack = false;
+                attackBlockTimer = attackBlockTime;
+                NADamageDelayTimer = NormalAttackDamageDelay;
+            }
+        }
+    }
+
+    public void OnPowerAttack(InputValue value)
+    {
+        if (!GameManager.Instance.playerInputEnabled)
+            return;
+
+        if (!isArmed)
+        {
+            if (canToggleWeapon && (animator.GetCurrentAnimatorStateInfo(0).IsName("Move") ||
+                                    animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") ||
+                                    animator.GetCurrentAnimatorStateInfo(0).IsName("Idle Sword") ||
+                                    animator.GetCurrentAnimatorStateInfo(0).IsName("Sword Run")))
+            {
+                isArmed = true;
+                canToggleWeapon = false;
+                WeaponToggleTimer = WeaponToggleBlockTime;
+            }
+            //Return since we just drew the weapon, we're not going to attack
+            return;
+        }
+        else
+        {
+            //Figure out how to attack now
+            if (canAttack && (animator.GetCurrentAnimatorStateInfo(0).IsName("Idle Sword") || animator.GetCurrentAnimatorStateInfo(0).IsName("Sword Run")))
+            {
+                animator.SetTrigger("PowerAttack");
+                canAttack = false;
+                attackBlockTimer = attackBlockTime;
+                PADamageDelayTimer = PowerAttackDamageDelay;
             }
         }
     }
 
     public void OnSheatheWeapon(InputValue value)
     {
-        isArmed = !isArmed;
+        if (!GameManager.Instance.playerInputEnabled)
+            return;
+
+        if (canToggleWeapon && (animator.GetCurrentAnimatorStateInfo(0).IsName("Move") ||
+                                animator.GetCurrentAnimatorStateInfo(0).IsName("Idle") ||
+                                animator.GetCurrentAnimatorStateInfo(0).IsName("Idle Sword") ||
+                                animator.GetCurrentAnimatorStateInfo(0).IsName("Sword Run")))
+        {
+            isArmed = !isArmed;
+            canToggleWeapon = false;
+            WeaponToggleTimer = WeaponToggleBlockTime;
+        }
+    }
+
+    private void DealDamage(float dmg)
+    {
+        List<Enemy> enemies = new List<Enemy>(avp.enemiesInRange);
+        foreach (var enemy in enemies)
+        {
+            enemy.Damage(dmg);
+        }
+    }
+
+    public void CheckDeadEnemy(Enemy enemy)
+    {
+        
+        if (avp.enemiesInRange.Contains(enemy)) avp.enemiesInRange.Remove(enemy);
     }
 
     public void SetWaypoints(List<GameObject> _waypoints)
