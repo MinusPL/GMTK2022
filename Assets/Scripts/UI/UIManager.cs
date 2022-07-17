@@ -35,6 +35,9 @@ public class UIManager : MonoBehaviour
     private float targetPlayerHealth = 1f;
     float refPlayerHealth;
 
+    [SerializeField]
+    private GameObject ingameMenu;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -99,4 +102,13 @@ public class UIManager : MonoBehaviour
     {
         effectText.text = effect;
     }
+
+    public bool ToggleIngameMenu()
+    {
+        ingameMenu.SetActive(!ingameMenu.activeSelf);
+        return ingameMenu.activeSelf;
+    }
+
+
+
 }

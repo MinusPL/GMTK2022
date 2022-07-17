@@ -325,4 +325,20 @@ public class GameManager : MonoBehaviour
                 break;
         }
     }
+
+    public void LoadScene(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
+
+    public void OnReturn()
+    {
+        playerInputEnabled = !uiManager.ToggleIngameMenu();
+        
+    }
+
+    public void EnablePlayerInput()
+    {
+        playerInputEnabled = true;
+    }
 }
