@@ -3,7 +3,17 @@ guid: 4e0d8157063599e499f140a259e07773
 ModelImporter:
   serializedVersion: 22103
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: goblin.003
+    second: {fileID: 2100000, guid: d54732063625e754ba84131479c2ea41, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: knight.003
+    second: {fileID: 2100000, guid: 1dd78788c1ded8648ab940c4e1a6e1fa, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

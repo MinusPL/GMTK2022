@@ -212,11 +212,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'You are always fully healed after completing challenge
+  m_text: 'You will be healed for 20% of your maximum health after battle.
 
-
-    You have
-    advantage over enemies'
+    Also
+    advantageous effects will be more likely.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2855,11 +2854,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'You are always fully healed after completing challenge
+  m_text: 'You won''t be healed after battle.
 
-
-    You have
-    advantage over enemies'
+    Also disadvantageous effects will
+    be more likely.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2959,7 +2957,7 @@ Transform:
   - {fileID: 5853461200648491680}
   - {fileID: 5853461199185908089}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5853461200374892966
 GameObject:
@@ -3563,11 +3561,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'You are always fully healed after completing challenge
+  m_text: 'You will be healed for 10% of your maximum health after battle.
 
-
-    You have
-    advantage over enemies'
+    Chances
+    of all kinds of effects are equal.'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
