@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
 
     public bool playerInputEnabled = true;
 
+    private bool diceMiniGamePlayed = false;
+
     public static GameManager Instance
     {
         get
@@ -30,12 +32,22 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     GameObject waCam;
 
+    [SerializeField]
+    GameObject minigameCam;
+
     private List<GameObject> waypoints;
     [SerializeField]
     private GameObject WAPath;
 
     [SerializeField]
     private string nextSceneName;
+
+    //This also controls how many dices are going to be rolled!
+    [SerializeField]
+    private int amountOfGates = 1;
+
+    [SerializeField]
+    private UIManager uiManager;
 
     // Start is called before the first frame update
     void Awake()
@@ -63,7 +75,9 @@ public class GameManager : MonoBehaviour
         var playerObj = Instantiate(playerObject, startingPoint.transform.position, Quaternion.Euler(0f,90f,0f));
         var camTarget = GameObject.FindGameObjectWithTag("Camera Target");
         camTarget.GetComponent<PlayerFollow>().player = playerObj;
-        GameObject.FindGameObjectWithTag("Player Camera").GetComponent<CinemachineVirtualCamera>().LookAt = playerObj.transform;
+        playerCam = GameObject.FindGameObjectWithTag("Player Camera");
+        playerCam.GetComponent<CinemachineVirtualCamera>().LookAt = playerObj.transform;
+        SwitchCamToPlayer();
     }
 
     public void EndLevel(int type)
@@ -83,5 +97,54 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Ooopsie, this trigger is not supported!");
                 break;
         }
+    }
+
+    public void NotifyInterraction(int type, GameObject sender)
+    {
+        switch((InterractionTriggerType)type)
+        {
+            case InterractionTriggerType.Gate:
+                uiManager
+                //sender.GetComponent<GateController>().Open();
+                break;
+            case InterractionTriggerType.DiceMinigame:
+                if (diceMiniGamePlayed) break;
+                sender.GetComponent<DiceGame>().StartGame(amountOfGates);
+                SwitchCamToMinigame();
+                playerInputEnabled = false;
+                diceMiniGamePlayed = true;
+                break;
+        }
+        
+    }
+
+    public void EndDiceMinigame(List<int> faces)
+    {
+        uiManager.ShowDiceMiniGameResults(faces);
+    }
+
+    public void ReturnToGame()
+    {
+        SwitchCamToPlayer();
+        playerInputEnabled = true;
+    }
+
+    private void SwitchCamToMinigame()
+    {
+        minigameCam.SetActive(true);
+        playerCam.SetActive(false);
+        waCam.SetActive(false);
+    }
+
+    private void SwitchCamToPlayer()
+    {
+        minigameCam.SetActive(false);
+        playerCam.SetActive(true);
+        waCam.SetActive(false);
+    }
+
+    public void SetChallengeDifficulty(int value)
+    {
+
     }
 }

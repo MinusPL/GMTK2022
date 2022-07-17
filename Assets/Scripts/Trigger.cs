@@ -8,10 +8,11 @@ public enum TriggerType
 {
     WalkAway = 0,
     JumpUp = 1,
+    Interraction = 2,
     NextLevel = 99,
 }
 
-public class EndTrigger : MonoBehaviour
+public class Trigger : MonoBehaviour
 {
     public UnityEvent<int> OnPlayerEnterEndTrigger;
 
