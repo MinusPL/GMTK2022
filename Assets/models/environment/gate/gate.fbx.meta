@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2bc103d338f07f746a18982f1a433997
+guid: 14478cd59f1a83743b84517e4e362dd8
 ModelImporter:
   serializedVersion: 22103
   internalIDToNameTable: []
@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: knight.003
-    second: {fileID: 2100000, guid: 6496d92b58cd95942a9d302ebc706cc7, type: 2}
+    second: {fileID: 2100000, guid: 1cdacd5e78444af4fad765223e5df3cc, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

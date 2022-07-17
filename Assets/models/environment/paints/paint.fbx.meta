@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 2bc103d338f07f746a18982f1a433997
+guid: 79b9575818268ee4995954976b9bb2b6
 ModelImporter:
   serializedVersion: 22103
   internalIDToNameTable: []
@@ -7,8 +7,13 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: elmo_god
+    second: {fileID: 2100000, guid: b6ffc9c74433cf847974311c5851d4c6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: knight.003
-    second: {fileID: 2100000, guid: 6496d92b58cd95942a9d302ebc706cc7, type: 2}
+    second: {fileID: 2100000, guid: c65aebb4122711543a5bd0cac5427f5a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
