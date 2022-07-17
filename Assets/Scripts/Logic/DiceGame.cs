@@ -21,6 +21,9 @@ public class DiceGame : MonoBehaviour
     [SerializeField]
     private Transform tableDownDirection;
 
+    [SerializeField]
+    private AudioSource diceRolling;
+
     int spawnedDice = 0;
     // Start is called before the first frame update
     void Start()
@@ -39,6 +42,7 @@ public class DiceGame : MonoBehaviour
         diceCount = count;
         gameRunning = true;
         InvokeRepeating("SpawnDice", 0f, diceSpawnTime);
+        diceRolling.Play();
     }
 
     private void SpawnDice()
@@ -60,12 +64,15 @@ public class DiceGame : MonoBehaviour
                 d.StopShuffle();
             }
             gameRunning = false;
+            diceRolling.Stop();
             Invoke("GameResults", 2f);
+
         }
     }
 
     private void GameResults()
     {
+        
         List<int> faces = new List<int>();
         foreach(var d in dice)
         {

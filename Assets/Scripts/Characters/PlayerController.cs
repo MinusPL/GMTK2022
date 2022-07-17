@@ -83,6 +83,14 @@ public class PlayerController : MonoBehaviour
     private AttackVolumePlayer avp;
 
 
+    //All Audio stuff
+    [SerializeField]
+    private AudioSource footsteps;
+    [SerializeField]
+    private AudioSource draw_sword;
+    [SerializeField]
+    private AudioSource swing_sword;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -126,12 +134,14 @@ public class PlayerController : MonoBehaviour
                 targetAngle = dir.x > 0 ? 90f : -90f;
             else
                 targetAngle = Mathf.Atan2(dir.x, dir.z) * Mathf.Rad2Deg;
+            if(!footsteps.isPlaying) footsteps.Play();
         }
         else
         {
             animator.SetBool("isMoving", false);
             animator.SetBool("isArmed", isArmed);
             //animator.SetBool("isSprint", false);
+            if (footsteps.isPlaying) footsteps.Stop();
         }
 
         if (transform.eulerAngles.y != targetAngle)
@@ -215,6 +225,7 @@ public class PlayerController : MonoBehaviour
         {
             swordBeltObject.SetActive(false);
             swordHandObject.SetActive(true);
+            if(!draw_sword.isPlaying) draw_sword.Play();
         }
 
         if (!isArmed && animator.GetCurrentAnimatorStateInfo(0).IsTag("SwordSheathed2"))
@@ -250,6 +261,7 @@ public class PlayerController : MonoBehaviour
             {
                 NADamageDelayTimer = 0f;
                 DealDamage(NormalAttackDamage*damageMultiplier);
+                swing_sword.Play();
             }
         }
 
@@ -260,6 +272,7 @@ public class PlayerController : MonoBehaviour
             {
                 PADamageDelayTimer = 0f;
                 DealDamage(PowerAttackDamage*damageMultiplier);
+                swing_sword.Play();
             }
         }
 

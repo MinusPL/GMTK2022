@@ -44,6 +44,12 @@ public class EnemyController : MonoBehaviour
 
     public float damageMultiplier = 1f;
 
+
+    [SerializeField]
+    private AudioSource footsteps;
+    [SerializeField]
+    private AudioSource swing_sword;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,10 +86,12 @@ public class EnemyController : MonoBehaviour
                 animator.SetBool("isMoving", true);
                 if (GameManager.Instance.playerInputEnabled)
                     targetAngle = dir.x > 0 ? 90f : -90f;
+                if (!footsteps.isPlaying) footsteps.Play();
             }
             else
             {
                 animator.SetBool("isMoving", false);
+                if (footsteps.isPlaying) footsteps.Stop();
             }
 
             ySpeed += Physics.gravity.y * Time.deltaTime;
@@ -113,6 +121,7 @@ public class EnemyController : MonoBehaviour
                     if (attackColider.playerInRange)
                     {
                         player.GetComponent<LivingEntity>().Damage(AttackDamage*damageMultiplier);
+                        swing_sword.Play();
                     }
                 }
             }
