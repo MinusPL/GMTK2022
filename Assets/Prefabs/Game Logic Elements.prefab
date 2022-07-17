@@ -371,6 +371,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerInputEnabled: 1
+  playerObject: {fileID: 0}
   startingPoint: {fileID: 1901727480314916696}
   playerCam: {fileID: 6268972397681213748}
   waCam: {fileID: 1901727479558453730}
@@ -379,6 +380,22 @@ MonoBehaviour:
   nextSceneName: 
   amountOfGates: 1
   uiManager: {fileID: 0}
+  firstGate: {fileID: 0}
+  diceMiniGameTrigger: {fileID: 0}
+  firstGateTrigger: {fileID: 0}
+  endLevelTrigger: {fileID: 0}
+  effectStrings:
+  - No Active Effect
+  - Enemies receive 200% of damage
+  - Enemies deal 50% of damage
+  - Defeat of enemy heals player by 2% of maximum health
+  - Heal player by 10% of maximu health
+  - All enemies receive 10% of their maximum health as damage
+  - Enemies receive 50% of damage
+  - Enemies deal 200% of damage
+  - Defeat of enemy deals player 2% of maximum health as damage
+  - Deal player 10% of maximum player health as damage
+  - Lucky (No effect)
 --- !u!1 &1901727480314916696
 GameObject:
   m_ObjectHideFlags: 0
@@ -459,7 +476,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1901727480515795229}
   - component: {fileID: 1901727480515795202}
-  - component: {fileID: 1901727480515795203}
+  - component: {fileID: 1512947148888979087}
   m_Layer: 0
   m_Name: End Trigger
   m_TagString: Untagged
@@ -495,7 +512,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 5, z: 3}
   m_Center: {x: 0, y: 2.5, z: 0}
---- !u!114 &1901727480515795203
+--- !u!114 &1512947148888979087
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -504,15 +521,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1901727480515795228}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61324d1879323cf429eebfd59c6af747, type: 3}
+  m_Script: {fileID: 11500000, guid: 8af556a924d28724cb2d66e27582e471, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnPlayerEnterEndTrigger:
+  OnPlayerInterractionTriggered:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1901727480252123480}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: EndLevel
+        m_MethodName: NotifyInterraction
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -522,7 +539,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  type: 0
+  type: 4
+  obj: {fileID: 1901727480515795228}
+  active: 0
 --- !u!1 &2460081767076439523
 GameObject:
   m_ObjectHideFlags: 0
@@ -631,7 +650,7 @@ MonoBehaviour:
     ModeOverride: 0
     LensShift: {x: 0, y: 0}
     GateFit: 2
-    m_SensorSize: {x: 1.7903847, y: 1}
+    m_SensorSize: {x: 1.410606, y: 1}
   m_Transitions:
     m_BlendHint: 0
     m_InheritPosition: 0
@@ -745,7 +764,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8341851156104311399}
   - component: {fileID: 1340493874101780191}
-  - component: {fileID: 7576017978986138729}
+  - component: {fileID: 486910651765244666}
   m_Layer: 0
   m_Name: NextLevelTrigger
   m_TagString: Untagged
@@ -781,7 +800,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2, y: 4, z: 5}
   m_Center: {x: 0, y: 2, z: 0}
---- !u!114 &7576017978986138729
+--- !u!114 &486910651765244666
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -790,15 +809,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 7620495034721126886}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 61324d1879323cf429eebfd59c6af747, type: 3}
+  m_Script: {fileID: 11500000, guid: 8af556a924d28724cb2d66e27582e471, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnPlayerEnterEndTrigger:
+  OnPlayerInterractionTriggered:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1901727480252123480}
         m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
-        m_MethodName: EndLevel
+        m_MethodName: NotifyInterraction
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -808,7 +827,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  type: 99
+  type: 5
+  obj: {fileID: 7620495034721126886}
+  active: 0
 --- !u!1 &7749308310741687132
 GameObject:
   m_ObjectHideFlags: 0

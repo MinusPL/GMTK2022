@@ -15,7 +15,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &967383521445687378
 Transform:
   m_ObjectHideFlags: 0
@@ -259,7 +259,7 @@ GameObject:
   - component: {fileID: 9142181666413429954}
   - component: {fileID: 9142181666413429957}
   - component: {fileID: 9142181666413429956}
-  - component: {fileID: 1953015905830702200}
+  - component: {fileID: 6628548584424029138}
   m_Layer: 0
   m_Name: PC2
   m_TagString: Player
@@ -382,7 +382,7 @@ MonoBehaviour:
   PowerAttackDamage: 40
   PowerAttackDamageDelay: 0.5
   avp: {fileID: 5213368436782551866}
---- !u!114 &1953015905830702200
+--- !u!114 &6628548584424029138
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -391,7 +391,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9142181666413429959}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 864d420e890ff844d8b6dd469e8912ee, type: 3}
+  m_Script: {fileID: 11500000, guid: 31b5ef5d116eda64e8e6afde4fe9af6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 200

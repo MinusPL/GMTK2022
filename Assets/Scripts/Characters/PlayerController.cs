@@ -77,6 +77,7 @@ public class PlayerController : MonoBehaviour
     private float PowerAttackDamageDelay = 2f;
     private float PADamageDelayTimer = 0f;
 
+    public float damageMultiplier = 1f;
 
     [SerializeField]
     private AttackVolumePlayer avp;
@@ -162,7 +163,7 @@ public class PlayerController : MonoBehaviour
             cc.height = characterHeight;
             animatorDirection = Vector3.zero;
 
-            if (Time.time - jumpButtonPressedTime <= jumpButtonGracePeriod && !isArmed)
+            if (Time.time - jumpButtonPressedTime <= jumpButtonGracePeriod)
             {
                 ySpeed = jumpSpeed;
                 animator.SetBool("isJumping", true);
@@ -248,7 +249,7 @@ public class PlayerController : MonoBehaviour
             if(NADamageDelayTimer <= 0f)
             {
                 NADamageDelayTimer = 0f;
-                DealDamage(NormalAttackDamage);
+                DealDamage(NormalAttackDamage*damageMultiplier);
             }
         }
 
@@ -258,7 +259,7 @@ public class PlayerController : MonoBehaviour
             if (PADamageDelayTimer <= 0f)
             {
                 PADamageDelayTimer = 0f;
-                DealDamage(PowerAttackDamage);
+                DealDamage(PowerAttackDamage*damageMultiplier);
             }
         }
 
@@ -305,6 +306,8 @@ public class PlayerController : MonoBehaviour
 
     public void OnJump(InputValue value)
     {
+        if (!GameManager.Instance.playerInputEnabled) return;
+
         if (value.isPressed)
         {
             jumpButtonPressedTime = Time.time;
@@ -411,4 +414,5 @@ public class PlayerController : MonoBehaviour
         waypoints = _waypoints;
 
     }
+
 }

@@ -7,9 +7,6 @@ public class EnemyController : MonoBehaviour
     private Animator animator;
     private CharacterController cc;
 
-    [SerializeField]
-    private float normalAttackMultiplier = 1f;
-
     private float smoothAngle;
     public float rotateSmoothTime = 0.1f;
 
@@ -43,6 +40,9 @@ public class EnemyController : MonoBehaviour
     private AttackVolume attackColider;
 
     private bool dead = false;
+    public bool aiEnabled = false;
+
+    public float damageMultiplier = 1f;
 
     // Start is called before the first frame update
     void Start()
@@ -57,7 +57,7 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!dead)
+        if (!dead && aiEnabled)
         {
             Vector3 dir = Vector3.zero;
 
@@ -112,7 +112,7 @@ public class EnemyController : MonoBehaviour
                     attackDamageDelayTimer = 0f;
                     if (attackColider.playerInRange)
                     {
-                        player.GetComponent<LivingEntity>().Damage(AttackDamage);
+                        player.GetComponent<LivingEntity>().Damage(AttackDamage*damageMultiplier);
                     }
                 }
             }
@@ -159,6 +159,7 @@ public class EnemyController : MonoBehaviour
     {
         dead = true;
         cc.height = 0.2f;
+        GameManager.Instance.OnEnemyDie(this);
         //cc.center = new Vector3(cc.center.x, 0.1f, cc.center.z);
     }
 }

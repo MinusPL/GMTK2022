@@ -31,16 +31,49 @@ public class LivingEntity : MonoBehaviour
         health -= amount;
         if(health <= 0f)
         {
+            health = 0f;
             Die();
         }
-        Debug.Log($"Current Health: {health}");
+        OnHealthChanged();
     }
 
     public void Heal(float amount)
     {
         health += amount;
         if (health >= maxHealth) health = maxHealth;
-        Debug.Log($"Current Health: {health}");
+        OnHealthChanged();
+    }
+
+    public void HealPercentage(float percentage)
+    {
+        float newHealth = maxHealth * percentage;
+        health = newHealth + health > maxHealth ? maxHealth : newHealth + health;
+        OnHealthChanged();
+    }
+
+    public void DamagePercentageWithoutKill(float percentage)
+    {
+        float newHealth = maxHealth * percentage;
+        health -= newHealth;
+        if (health < 0) health = 1;
+        OnHealthChanged();
+    }
+
+    public void DamagePercentage(float percentage)
+    {
+        float newHealth = maxHealth * percentage;
+        health -= newHealth;
+        if (health <= 0f)
+        {
+            health = 0f;
+            Die();
+        }
+        OnHealthChanged();
+    }
+
+    public virtual void OnHealthChanged()
+    {
+
     }
 
     public virtual void Die()

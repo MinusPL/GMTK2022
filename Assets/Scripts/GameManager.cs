@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    [SerializeField]
     GameObject playerObject;
 
     [SerializeField]
@@ -49,6 +50,34 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private UIManager uiManager;
 
+    List<int> rolledFaces;
+
+    //Values deciding challenge difficulty, figure out a way to use that
+    private int difficulty = 0;
+
+    //Current challenge stuff
+    private GameObject challengeGate;
+    private List<EnemyController> challengeEnemies;
+
+    [SerializeField]
+    private GameObject firstGate;
+
+    //Triggers
+    [Header("Triggers")]
+    [SerializeField]
+    private GameObject diceMiniGameTrigger;
+    [SerializeField]
+    private GameObject firstGateTrigger;
+    [SerializeField]
+    private GameObject endLevelTrigger;
+
+    [Header("Effects")]
+    [SerializeField]
+    private List<string> effectStrings;
+
+    private bool killHealFlag = false;
+    private bool killDamageFlag = false;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -71,48 +100,40 @@ public class GameManager : MonoBehaviour
 
     void LoadPlayer()
     {
-        playerObject = Resources.Load<GameObject>("Prefabs/PC2");
-        var playerObj = Instantiate(playerObject, startingPoint.transform.position, Quaternion.Euler(0f,90f,0f));
+        
+        playerObject = Instantiate(Resources.Load<GameObject>("Prefabs/PC2"), startingPoint.transform.position, Quaternion.Euler(0f,90f,0f));
         var camTarget = GameObject.FindGameObjectWithTag("Camera Target");
-        camTarget.GetComponent<PlayerFollow>().player = playerObj;
+        camTarget.GetComponent<PlayerFollow>().player = playerObject;
         playerCam = GameObject.FindGameObjectWithTag("Player Camera");
-        playerCam.GetComponent<CinemachineVirtualCamera>().LookAt = playerObj.transform;
+        playerCam.GetComponent<CinemachineVirtualCamera>().LookAt = playerObject.transform;
         SwitchCamToPlayer();
-    }
-
-    public void EndLevel(int type)
-    {
-        playerCam.SetActive(false);
-        waCam.SetActive(true);
-        switch((TriggerType)type)
-        {
-            case TriggerType.WalkAway:
-                GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().SetWaypoints(waypoints);
-                playerInputEnabled = false;
-                break;
-            case TriggerType.NextLevel:
-                SceneManager.LoadScene(nextSceneName);
-                break;
-            default:
-                Debug.Log("Ooopsie, this trigger is not supported!");
-                break;
-        }
+        diceMiniGameTrigger.GetComponent<Trigger>().EnableTrigger(true);
     }
 
     public void NotifyInterraction(int type, GameObject sender)
     {
-        switch((InterractionTriggerType)type)
+        switch((TriggerType)type)
         {
-            case InterractionTriggerType.Gate:
-                uiManager
-                //sender.GetComponent<GateController>().Open();
+            case TriggerType.Gate:
+                uiManager.ShowGateMenu(rolledFaces);
+                playerInputEnabled = false;
+                challengeGate = sender;
                 break;
-            case InterractionTriggerType.DiceMinigame:
+            case TriggerType.DiceMinigame:
                 if (diceMiniGamePlayed) break;
                 sender.GetComponent<DiceGame>().StartGame(amountOfGates);
                 SwitchCamToMinigame();
                 playerInputEnabled = false;
                 diceMiniGamePlayed = true;
+                break;
+            case TriggerType.WalkAway:
+                GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>().SetWaypoints(waypoints);
+                playerInputEnabled = false;
+                playerCam.SetActive(false);
+                waCam.SetActive(true);
+                break;
+            case TriggerType.NextLevel:
+                SceneManager.LoadScene(nextSceneName);
                 break;
         }
         
@@ -120,13 +141,16 @@ public class GameManager : MonoBehaviour
 
     public void EndDiceMinigame(List<int> faces)
     {
-        uiManager.ShowDiceMiniGameResults(faces);
+        rolledFaces = faces;
+        uiManager.ShowDiceMiniGameResults(rolledFaces);
+        firstGateTrigger.GetComponent<Trigger>().EnableTrigger(true);
     }
 
     public void ReturnToGame()
     {
         SwitchCamToPlayer();
         playerInputEnabled = true;
+        challengeGate = firstGate;
     }
 
     private void SwitchCamToMinigame()
@@ -145,6 +169,160 @@ public class GameManager : MonoBehaviour
 
     public void SetChallengeDifficulty(int value)
     {
+        switch(value)
+        {
+            case 1:
+            case 2:
+                difficulty = 0;
+                break;
+            case 3:
+            case 4:
+                difficulty = 1;
+                break;
+            case 5:
+            case 6:
+                difficulty = 2;
+                break;
+        }
+        rolledFaces.Remove(value);
+        uiManager.CloseGateMenu();
+        playerInputEnabled = true;
+        challengeGate.GetComponent<GateController>().Open();
+        challengeEnemies = challengeGate.GetComponent<GateController>().challengeEnemies;
+        EnableGateAI();
+        if (challengeGate.GetComponent<GateController>().challengeEnemies.Count == 0) OnEnemyDie(null);
+    }
 
+    public void OnEnemyDie(EnemyController enemy)
+    {
+        if (killHealFlag)
+            playerObject.GetComponent<LivingEntity>().HealPercentage(0.02f);
+        if (killDamageFlag)
+            playerObject.GetComponent<LivingEntity>().DamagePercentageWithoutKill(0.02f);
+
+        if(challengeEnemies.Contains(enemy))
+        {
+            challengeEnemies.Remove(enemy);
+        }
+
+        if(challengeEnemies.Count == 0)
+        {
+            uiManager.DisableDiceRolling();
+            //Heal based on difficulty
+            float healPercentage = difficulty == 0 ? .2f : difficulty == 1 ? .1f : 0f;
+            playerObject.GetComponent<LivingEntity>().HealPercentage(healPercentage);
+            if(challengeGate.GetComponent<GateController>().nextGate != null)
+            {
+                challengeGate.GetComponent<GateController>().nextGate.GetComponent<GateController>().gateTrigger.EnableTrigger(true);
+                challengeGate = challengeGate.GetComponent<GateController>().nextGate;
+            }
+            else
+            {
+                endLevelTrigger.GetComponent<Trigger>().EnableTrigger(true);
+            }
+        }
+    }
+
+    public void OnPlayerHealthChanged(float percentage)
+    {
+        uiManager.SetHealthFill(percentage);
+    }
+
+    private void EnableGateAI()
+    {
+        foreach (var e in challengeEnemies)
+        {
+            e.aiEnabled = true;
+        }
+        uiManager.EnableDiceRolling();
+    }
+
+    public void SetEffect(int value)
+    {
+        short type = 0;
+
+        switch(difficulty)
+        {
+            case 0:
+                if (value >= 1 && value <= 3) type = 1;
+                else if (value >= 4 && value <= 5) type = 0;
+                else type = 5;
+                break;
+            case 1:
+                if (value >= 1 && value <= 2) type = 1;
+                else if (value >= 3 && value <= 4) type = 0;
+                else type = 5;
+                break;
+            case 2:
+                if (value == 1) type = 1;
+                else if (value >= 2 && value <= 3) type = 0;
+                else type = 5;
+                break;
+        }
+
+
+        int effect = Random.Range(1, 6);
+        if(type == 0)
+        {
+            uiManager.SetEffectString(effectStrings[0]);
+        }
+        else
+        {
+            uiManager.SetEffectString(effectStrings[effect + type]);
+        }
+
+        //Reset previous multipliers
+        playerObject.GetComponent<PlayerController>().damageMultiplier = 1f;
+        foreach(var e in challengeEnemies)
+        {
+            e.damageMultiplier = 1f;
+        }
+        //Reset all flags
+        killDamageFlag = false;
+        killHealFlag = false;
+
+        //Do effect
+        switch (effect+type)
+        {
+            case 1:
+                playerObject.GetComponent<PlayerController>().damageMultiplier = 2f;
+                break;
+            case 2:
+                foreach (var e in challengeEnemies)
+                {
+                    e.damageMultiplier = .5f;
+                }
+                break;
+            case 3:
+                killHealFlag = true;
+                break;
+            case 4:
+                playerObject.GetComponent<LivingEntity>().HealPercentage(0.1f);
+                break;
+            case 5:
+                foreach (var e in challengeEnemies)
+                {
+                    e.gameObject.GetComponent<LivingEntity>().DamagePercentage(0.1f);
+                }
+                break;
+            case 6:
+                playerObject.GetComponent<PlayerController>().damageMultiplier = .5f;
+                break;
+            case 7:
+                foreach (var e in challengeEnemies)
+                {
+                    e.damageMultiplier = 2f;
+                }
+                break;
+            case 8:
+                killDamageFlag = true;
+                break;
+            case 9:
+                playerObject.GetComponent<LivingEntity>().DamagePercentageWithoutKill(0.1f);
+                break;
+            case 10:
+                //LOL NOTHING
+                break;
+        }
     }
 }
